@@ -1,29 +1,29 @@
-import type { ComponentType } from "react"
+import type { ComponentType, FC } from "react";
 
 // for Nodes.ts
 export interface Position {
-    x: number,
-    y: number
+  x: number;
+  y: number;
 }
 
 export interface NodeData {
-    type: string,
-    label: string,
+  type?: string;
+  label: string;
 }
 
 export interface NodeInterface {
-    id: string
-    initialPostion: Position
-    data: NodeData
+  id: string;
+  initialPosition: Position;
+  data: NodeData;
+  type: FC;
 }
 
 export interface EdgeInterface {
-    id: string,
-    source: string,
-    target: string,
+  id: string;
+  source: string;
+  target: string;
 }
 
 export interface NodeType {
-    [key: string]: ComponentType<unknown>
+  [key: string]: ComponentType<unknown>;
 }
-

@@ -1,0 +1,32 @@
+.handlebar {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: black;
+    border-radius: 50%;
+    cursor: crosshair;
+
+    &.left {
+        left: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &.right {
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &.top {
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    &.bottom {
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

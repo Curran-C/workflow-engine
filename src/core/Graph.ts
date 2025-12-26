@@ -41,4 +41,22 @@ export class Graph {
   getNodeById(id: string) {
     return this.nodes.get(id);
   }
+
+  //gets the source nodes
+  getOutgoingEdges(node: Node) {
+    const nodeId = node.getId();
+    return this.getEdges().reduce((acc, val) => {
+      if (val.getSource() === nodeId) acc.push(val);
+      return acc;
+    }, []);
+  }
+
+  //gets the destination nodes
+  getIncomingEdges(node: Node) {
+    const nodeId = node.getId();
+    return this.getEdges().reduce((acc, val) => {
+      if (val.getTarget() === nodeId) acc.push(val);
+      return acc;
+    }, []);
+  }
 }

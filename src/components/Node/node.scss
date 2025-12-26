@@ -1,0 +1,14 @@
+.node-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    .node {
+        border: 1px solid black;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-align: center;
+        min-width: 100px;
+        background: white;
+    }
+}
