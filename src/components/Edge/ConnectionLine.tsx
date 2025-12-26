@@ -1,4 +1,5 @@
-import { FC, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
+import type { FC } from "react";
 
 type Point = { x: number; y: number };
 
@@ -7,13 +8,24 @@ interface ConnectionLineProps {
   targetId: string;
 }
 
-const getCenter = (el: HTMLElement, container: HTMLElement): Point => {
-  const elRect = el.getBoundingClientRect();
+const getHandlePosition = (nodeEl: HTMLElement, handleSelector: string, container: HTMLElement): Point => {
+  const handleEl = nodeEl.querySelector(handleSelector) as HTMLElement | null;
+  if (!handleEl) {
+    // Fallback to node center if handle not found
+    const nodeRect = nodeEl.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    return {
+      x: nodeRect.left + nodeRect.width / 2 - containerRect.left,
+      y: nodeRect.top + nodeRect.height / 2 - containerRect.top,
+    };
+  }
+
+  const handleRect = handleEl.getBoundingClientRect();
   const containerRect = container.getBoundingClientRect();
 
   return {
-    x: elRect.left + elRect.width / 2 - containerRect.left,
-    y: elRect.top + elRect.height / 2 - containerRect.top,
+    x: handleRect.left + handleRect.width / 2 - containerRect.left,
+    y: handleRect.top + handleRect.height / 2 - containerRect.top,
   };
 };
 
@@ -21,37 +33,59 @@ const ConnectionLine: FC<ConnectionLineProps> = ({ sourceId, targetId }) => {
   const [points, setPoints] = useState<{ from: Point; to: Point } | null>(null);
 
   useLayoutEffect(() => {
-    const container = document.querySelector(
-      ".graph-canvas"
-    ) as HTMLElement | null;
+    const updatePoints = () => {
+      const container = document.querySelector(".graph-canvas") as HTMLElement | null;
 
-    if (!container) return;
+      if (!container) return;
 
-    const sourceEl = document.querySelector(
-      `[data-node-id="${sourceId}"]`
-    ) as HTMLElement | null;
+      const sourceEl = document.querySelector(`[data-node-id="${sourceId}"]`) as HTMLElement | null;
 
-    const targetEl = document.querySelector(
-      `[data-node-id="${targetId}"]`
-    ) as HTMLElement | null;
+      const targetEl = document.querySelector(`[data-node-id="${targetId}"]`) as HTMLElement | null;
 
-    if (!sourceEl || !targetEl) return;
+      if (!sourceEl || !targetEl) return;
 
-    setPoints({
-      from: getCenter(sourceEl, container),
-      to: getCenter(targetEl, container),
-    });
+      // Get source handle (bottom handle) and target handle (top handle)
+      const from = getHandlePosition(sourceEl, '.handlebar.bottom[data-handle-type="source"]', container);
+      const to = getHandlePosition(targetEl, '.handlebar.top[data-handle-type="target"]', container);
+
+      setPoints({ from, to });
+    };
+
+    updatePoints();
+
+    // Update on resize
+    window.addEventListener("resize", updatePoints);
+    return () => window.removeEventListener("resize", updatePoints);
   }, [sourceId, targetId]);
 
   if (!points) return null;
 
   const { from, to } = points;
-  const controlX = (from.x + to.x) / 2;
+
+  // React Flow style Bezier curve calculation
+  // Creates smooth S-curves connecting handles
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+
+  // Calculate control point offset for smooth curves
+  // React Flow uses a distance-based offset with a minimum threshold
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const minOffset = 50; // Minimum curve offset
+  const maxOffset = 200; // Maximum curve offset
+  const offset = Math.max(minOffset, Math.min(distance * 0.4, maxOffset));
+
+  // Source control point: extends downward from source handle (bottom)
+  const sourceControlX = from.x;
+  const sourceControlY = from.y + offset;
+
+  // Target control point: extends upward from target handle (top)
+  const targetControlX = to.x;
+  const targetControlY = to.y - offset;
 
   const d = `
     M ${from.x},${from.y}
-    C ${controlX},${from.y}
-      ${controlX},${to.y}
+    C ${sourceControlX},${sourceControlY}
+      ${targetControlX},${targetControlY}
       ${to.x},${to.y}
   `;
 

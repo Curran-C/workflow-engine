@@ -27,13 +27,13 @@ const App: FC<GraphProps> = (props) => {
   //this is under the assumption that there can only be one source and target
   return (
     <div className="graph-canvas" style={{ position: "relative", width: "100%", height: "100%" }}>
-      <EdgesLayer graph={graph} />
       {graph.getNodes().map((node) => {
         const hasSource = graph.getOutgoingEdges(node).length > 0;
         const hasTarget = graph.getIncomingEdges(node).length > 0;
 
         return <Node types={tempNodeTypes} key={node.getId()} node={node} source={hasSource} target={hasTarget} />;
       })}
+      <EdgesLayer graph={graph} />
     </div>
   );
 };

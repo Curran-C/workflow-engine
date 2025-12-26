@@ -6,6 +6,8 @@ const EdgesLayer: FC<EdgesLayerProps> = ({ graph }) => {
   return (
     <svg
       className="edges-layer"
+      width="100%"
+      height="100%"
       style={{
         position: "absolute",
         inset: 0,
