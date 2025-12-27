@@ -53,9 +53,41 @@ const ConnectionLine: FC<ConnectionLineProps> = ({ sourceId, targetId }) => {
 
     updatePoints();
 
+    let rafId: number | null = null;
+    let pendingUpdate = false;
+
+    // Throttled update function using requestAnimationFrame
+    const scheduleUpdate = () => {
+      if (!pendingUpdate) {
+        pendingUpdate = true;
+        rafId = requestAnimationFrame(() => {
+          updatePoints();
+          pendingUpdate = false;
+        });
+      }
+    };
+
     // Update on resize
-    window.addEventListener("resize", updatePoints);
-    return () => window.removeEventListener("resize", updatePoints);
+    const handleResize = () => {
+      updatePoints();
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Update on mouse move (throttled with requestAnimationFrame)
+    // This ensures smooth updates during node dragging
+    const handleMouseMove = () => {
+      scheduleUpdate();
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, [sourceId, targetId]);
 
   if (!points) return null;

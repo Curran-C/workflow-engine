@@ -10,7 +10,7 @@ export class Node {
 
     constructor(node: NodeInterface) {
         this.id = node.id
-        this.initialPosition = node.initialPostion
+        this.initialPosition = node.initialPosition
         this.data = node.data
         this.type = node.type
     }

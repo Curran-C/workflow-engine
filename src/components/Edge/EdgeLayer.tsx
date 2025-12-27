@@ -10,9 +10,13 @@ const EdgesLayer: FC<EdgesLayerProps> = ({ graph }) => {
       height="100%"
       style={{
         position: "absolute",
-        inset: 0,
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
         pointerEvents: "none",
         overflow: "visible",
+        zIndex: 1,
       }}
     >
       {graph.getEdges().map((edge) => (
