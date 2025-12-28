@@ -15,7 +15,7 @@ export interface NodeInterface {
   id: string;
   initialPosition: Position;
   data: NodeData;
-  type: FC;
+  type: string;
 }
 
 export interface EdgeInterface {
@@ -25,5 +25,5 @@ export interface EdgeInterface {
 }
 
 export interface NodeType {
-  [key: string]: ComponentType<unknown>;
+  [key: string]: ComponentType<any>;
 }

@@ -1,10 +1,11 @@
 import type { Node } from "../core/Node";
+import type { NodeType } from "../core/type";
 
 export interface NodeProps {
-  types: object;
-  source: string;
+  types: NodeType;
+  source: boolean;
   node: Node;
-  target: string;
+  target: boolean;
 }
 
 export interface HandleBarProps {

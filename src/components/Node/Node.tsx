@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { HandleBar } from "../Handlebar/HandleBar";
 import type { NodeProps } from "../types";
 import "./node.scss";
+import { NodeContext } from "./NodeContext";
 
 const Node = (props: NodeProps) => {
   const { source, target, node, types } = props;
@@ -9,6 +10,7 @@ const Node = (props: NodeProps) => {
   const { x, y } = node.getPosition();
 
   const [position, setPosition] = useState({ x, y });
+  const [version, setVersion] = useState(0);
 
   const draggingRef = useRef(false);
   const startMouseRef = useRef({ x: 0, y: 0 });
@@ -46,23 +48,32 @@ const Node = (props: NodeProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    node._bindOnDataChange(() => {
+      setVersion(v => v + 1);
+    });
+  }, [node]);
+  
+
+  const Component = types?.[node.getType()];
   return (
-    <div
-      data-node-id={node.getId()}
-      className="node-wrapper"
-      onMouseDown={onMouseDown}
-      style={{
-        position: "absolute",
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        cursor: "grab",
-      }}
-    >
-      {target && <HandleBar type="target" position="top" />}
+    <NodeContext.Provider value={{ node, version }}>
+      <div
+        data-node-id={node.getId()}
+        className="node-wrapper"
+        onMouseDown={onMouseDown}
+        style={{
+          position: "absolute",
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          cursor: "grab",
+        }}
+      >
+        {target && <HandleBar type="target" position="top" />}
+        <div className="node">{Component ? <Component {...node.getData()} /> : data.label}</div>
 
-      <div className="node">{types[node.getType()]?.(node.getData()) || data.label}</div>
-
-      {source && <HandleBar type="source" position="bottom" />}
-    </div>
+        {source && <HandleBar type="source" position="bottom" />}
+      </div>
+    </NodeContext.Provider>
   );
 };
 

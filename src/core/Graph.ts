@@ -18,7 +18,7 @@ export class Graph {
 
   private initNodes(nodes: NodeInterface[]) {
     nodes.forEach((node) => {
-      const nodeInstance = new Node(node);
+      const nodeInstance = new Node(node, this);
       this.nodes.set(nodeInstance.getId(), nodeInstance);
     });
   }
@@ -58,5 +58,17 @@ export class Graph {
       if (val.getTarget() === nodeId) acc.push(val);
       return acc;
     }, []);
+  }
+
+  emit(fromId: string, type: string, payload: any) {
+    const fromNode = this.nodes.get(fromId);
+    if (!fromNode) return;
+
+    this.getOutgoingEdges(fromNode).forEach((edge) => {
+      const target = this.nodes.get(edge.getTarget());
+      if (target) {
+        target._receive(type, payload, fromId);
+      }
+    });
   }
 }
