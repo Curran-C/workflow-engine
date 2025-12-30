@@ -14,15 +14,15 @@ A powerful, event-driven node-based workflow builder for React. Build complex wo
 ## Installation
 
 ```bash
-npm i workflow-engine
+npm i @currandoddabele/workflow-engine
 ```
 
 ## Quick Start
 
 ```tsx
-import { Graph } from 'workflow-engine';
-import Node from 'workflow-engine/components/Node';
-import EdgesLayer from 'workflow-engine/components/Edge/EdgeLayer';
+import { Graph } from '@currandoddabele/workflow-engine';
+import Node from '@currandoddabele/workflow-engine/components/Node';
+import EdgesLayer from '@currandoddabele/workflow-engine/components/Edge/EdgeLayer';
 
 // Define your nodes
 const initialNodes = [
@@ -76,8 +76,8 @@ function App() {
 ### Example 1: Simple Data Flow
 
 ```tsx
-import { Graph } from 'workflow-engine';
-import { useNodeData, useEmit, useOn } from 'workflow-engine/components/Node/hooks';
+import { Graph } from '@currandoddabele/workflow-engine';
+import { useNodeData, useEmit, useOn } from '@currandoddabele/workflow-engine/components/Node/hooks';
 
 // Source Node Component
 function NumberSource() {
@@ -293,7 +293,7 @@ interface NodeData {
 Creating custom nodes is straightforward. Just create a React component and use the provided hooks:
 
 ```tsx
-import { useNodeData, useSetNodeData, useEmit, useOn } from 'workflow-engine/components/Node/hooks';
+import { useNodeData, useSetNodeData, useEmit, useOn } from '@currandoddabele/workflow-engine/components/Node/hooks';
 
 interface MyNodeData {
   value?: number;
